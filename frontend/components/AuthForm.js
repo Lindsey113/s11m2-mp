@@ -8,6 +8,7 @@ export default function AuthForm() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
+  const navigate = useNavigate()
 
   const toggleFormMode = () => {
     setIsLogin(!isLogin)
@@ -26,19 +27,21 @@ export default function AuthForm() {
     setError('')
     setMessage('')
 
-    
-      try {
-        const {data} = await axios.post(
-          `/api/auth/${isLogin ? 'login' : 'register'}`,
-          {username, password}
-        )
-        if(isLogin) {
-          localStorage.setItem('token', data.token)
-          useNavigate('/stars')
-        }
-      } catch (error) {
-        setError('An error occurred! :(')
+
+    try {
+      const { data } = await axios.post(
+        `/api/auth/${isLogin ? 'login' : 'register'}`,
+        { username, password }
+      )
+      if (isLogin) {
+        localStorage.setItem('token', data.token)
+        navigate('/stars')
+      } else {
+        setMessage(data.message)
       }
+    } catch (error) {
+      setError(err?.response?.data?.message || 'An error occurred! :(')
+    }
 
   }
 
